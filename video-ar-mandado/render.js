@@ -4,14 +4,14 @@ const fs = require("fs");
 const path = require("path");
 const FPS = 24;
 (async () => {
-  const a = parseInt(process.argv[2] || "0"), b = parseInt(process.argv[3] || "1872"), step = parseInt(process.argv[4] || "1");
+  const a = parseInt(process.argv[2] || "0"), b = parseInt(process.argv[3] || "2477"), step = parseInt(process.argv[4] || "1");
   const out = process.argv[5] || path.join(__dirname, "frames");
   fs.mkdirSync(out, { recursive: true });
   const browser = await chromium.launch({ args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] });
-  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } });
+  const page = await browser.newPage({ viewport: { width: 1920, height: 1080 } });
   page.on("console", (m) => { if (m.type() === "error") console.log("console:", m.text()); });
   page.on("pageerror", (e) => console.log("pageerror:", e.message));
-  await page.setContent('<html><body style="margin:0;background:#000"><canvas id="c" width="1280" height="720"></canvas></body></html>');
+  await page.setContent('<html><body style="margin:0;background:#000"><canvas id="c" width="1920" height="1080"></canvas></body></html>');
   await page.addScriptTag({ path: path.join(__dirname, "node_modules/three/build/three.min.js") });
   await page.addScriptTag({ path: path.join(__dirname, "scene.js") });
   const t0 = Date.now();
