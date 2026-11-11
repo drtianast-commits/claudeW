@@ -103,17 +103,17 @@
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.025; sun.shadow.radius = 2.5; scene.add(sun);
 
   // ---------- piso e via ----------
-  const ground = new T.Mesh(new T.PlaneGeometry(700, 700), MT(texConcrete, 0.95)); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
-  const road = new T.Mesh(new T.PlaneGeometry(320, 17), MT(texAsphalt, 0.88)); road.rotation.x = -Math.PI / 2; road.position.set(0, 0.012, 12.8); road.receiveShadow = true; scene.add(road);
+  const matGround = MT(texConcrete, 0.95); matGround.name = "MAT_concrete"; const ground = new T.Mesh(new T.PlaneGeometry(700, 700), matGround); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+  const matRoad = MT(texAsphalt, 0.88); matRoad.name = "MAT_asphalt"; const road = new T.Mesh(new T.PlaneGeometry(320, 17), matRoad); road.rotation.x = -Math.PI / 2; road.position.set(0, 0.012, 12.8); road.receiveShadow = true; scene.add(road);
   for (const z of [4.6, 21]) { const l = new T.Mesh(new T.PlaneGeometry(320, 0.16), M(0xd9d9d0, 0.8)); l.rotation.x = -Math.PI / 2; l.position.set(0, 0.02, z); scene.add(l); }
   for (let x = -150; x < 150; x += 6) { const l = new T.Mesh(new T.PlaneGeometry(3, 0.14), M(0xd8b21a, 0.8)); l.rotation.x = -Math.PI / 2; l.position.set(x, 0.02, 12.6); scene.add(l); }
-  const grass = new T.Mesh(new T.PlaneGeometry(320, 40), MT(texGrass, 1)); grass.rotation.x = -Math.PI / 2; grass.position.set(0, 0.008, 42); grass.receiveShadow = true; scene.add(grass);
+  const matGrass = MT(texGrass, 1); matGrass.name = "MAT_grass"; const grass = new T.Mesh(new T.PlaneGeometry(320, 40), matGrass); grass.rotation.x = -Math.PI / 2; grass.position.set(0, 0.008, 42); grass.receiveShadow = true; scene.add(grass);
 
   // ---------- pipe rack ----------
   const LX = 0.35, PY = 7.0, PR = 0.5, LA = 1.0;
-  const steel = M(0xa9c2ac, 0.7, 0.2), steel2 = M(0x8fa994, 0.7, 0.2);
+  const steel = M(0xa9c2ac, 0.7, 0.2), steel2 = M(0x8fa994, 0.7, 0.2); steel.name = "MAT_steel"; steel2.name = "MAT_steel2";
   const yellowPipe = 0xdcae10;
-  const matPipe = (len, r) => MT(paintTex("#e2b512", ["#a8830a", "#7a6a2a", "#f0d050", "#8a5a1a"], Math.max(1, Math.round(r * 4)), Math.max(1, Math.round(len / 5))), 0.5, 0.15);
+  const matPipe = (len, r) => { const m = MT(paintTex("#e2b512", ["#a8830a", "#7a6a2a", "#f0d050", "#8a5a1a"], Math.max(1, Math.round(r * 4)), Math.max(1, Math.round(len / 5))), 0.5, 0.15); m.name = "MAT_pipe"; return m; };
   const matPipeMain = matPipe(132, 0.5);
   const rack = new T.Group(); scene.add(rack);
   for (let x = -65; x <= 65; x += 10) {
@@ -135,7 +135,7 @@
 
   // ---------- planta ao fundo ----------
   (function plant() {
-    const shed = MT(texShed, 0.7, 0.3), shed2 = M(0x98a2ab, 0.7, 0.3), rust = M(0x7b4a32, 0.9), conc = M(0x9a9a96, 0.95);
+    const shed = MT(texShed, 0.7, 0.3); shed.name = "MAT_shed"; const shed2 = M(0x98a2ab, 0.7, 0.3), rust = M(0x7b4a32, 0.9), conc = M(0x9a9a96, 0.95);
     box(70, 16, 30, shed, -30, 8, -48, scene);
     for (let i = 0; i < 5; i++) { const r = box(14, 3.2, 30.4, shed2, -58 + i * 14, 17.2, -48, scene); r.rotation.z = 0.22; }
     for (let i = 0; i < 9; i++) box(0.3, 15.6, 0.3, shed2, -64 + i * 8.5, 7.8, -32.8, scene);
@@ -183,7 +183,7 @@
     cyl(0.08, 0.1, 6.2, steel2, x, 3.1, z, scene, 10);
     box(0.5, 0.35, 0.4, M(0xd0d3d6, 0.6), x, 5.7, z, scene);
     const horn = cyl(0.26, 0.07, 0.45, M(0xb9bcbf, 0.5, 0.4), x, 5.7, z + 0.42, scene, 16); horn.rotation.x = Math.PI / 2;
-    const mat = new T.MeshStandardMaterial({ color: 0x7a1010, emissive: 0xff1a0a, emissiveIntensity: 0, roughness: 0.3 });
+    const mat = new T.MeshStandardMaterial({ color: 0x7a1010, emissive: 0xff1a0a, emissiveIntensity: 0, roughness: 0.3 }); mat.name = "DYN_beacon" + beacons.length;
     const b = cyl(0.17, 0.19, 0.3, mat, x, 6.38, z, scene, 16); b.castShadow = false;
     let pl = null; if (light) { pl = new T.PointLight(0xff2a14, 0, 34, 1.6); pl.position.set(x, 6.5, z); scene.add(pl); }
     beacons.push({ mat, pl, ph: x * 0.37 });
@@ -207,7 +207,7 @@
     return { E, H: S.clone().addScaledVector(d, Lc) };
   }
   function makeWorker(o) {
-    const suit = M(o.suit || 0x1d2f55, 0.85), stripe = M(0xd9ec3a, 0.5, 0, { emissive: 0x3a4208 }), skin = M(0xb98a68, 0.75), boot = M(0x1a1a1a, 0.7), glove = M(o.glove || 0xe3c53f, 0.75);
+    const suit = M(o.suit || 0x1d2f55, 0.85); suit.name = "MAT_suit"; const stripe = M(0xd9ec3a, 0.5, 0, { emissive: 0x3a4208 }), skin = M(0xb98a68, 0.75), boot = M(0x1a1a1a, 0.7), glove = M(o.glove || 0xe3c53f, 0.75);
     const web = M(0x18191b, 0.8), webY = M(0xe8b800, 0.7);
     const g = new T.Group(); const upper = new T.Group(); upper.position.y = 0.9; g.add(upper);
     // tronco
@@ -324,7 +324,7 @@
     for (const z of [-0.6, 0.6]) box(0.06, 0.16, 0.34, M(0xfff6c8, 0.2, 0, { emissive: 0xfff0a0, emissiveIntensity: 0.9 }), 2.67, 0.95, z, g);
     const wheels = [];
     for (const x of [1.75, -1.6]) for (const z of [-0.9, 0.9]) { const w = cyl(0.42, 0.42, 0.3, M(0x15171a, 0.9), x, 0.42, z, g, 22); w.rotation.x = Math.PI / 2; cyl(0.22, 0.22, 0.31, M(0xb9bcbf, 0.3, 0.8), 0, 0, 0, w, 14); wheels.push(w); }
-    const bm = new T.MeshStandardMaterial({ color: 0xa35a00, emissive: 0xff9a00, emissiveIntensity: 0 }); box(1.1, 0.1, 0.22, bm, 0.15, 1.95, 0, g);
+    const bm = new T.MeshStandardMaterial({ color: 0xa35a00, emissive: 0xff9a00, emissiveIntensity: 0 }); bm.name = "DYN_truckBm"; box(1.1, 0.1, 0.22, bm, 0.15, 1.95, 0, g);
     scene.add(g); return { g, wheels, bm };
   }
   // ---------- carretinha ----------
@@ -364,7 +364,7 @@
     const wheels = []; for (const x of [-1.3, 1.3]) for (const z of [-1.05, 1.05]) { const w = cyl(0.5, 0.5, 0.36, M(0x15171a, 0.9), x, 0.5, z, g, 22); w.rotation.x = Math.PI / 2; cyl(0.25, 0.25, 0.37, org, 0, 0, 0, w, 14); wheels.push(w); }
     const turret = new T.Group(); turret.position.set(-0.9, 1.1, 0); g.add(turret);
     box(2.0, 0.75, 1.7, org, 0.2, 0.4, 0, turret); box(0.9, 0.6, 1.72, dk, -0.9, 0.5, 0, turret);
-    const bm = new T.MeshStandardMaterial({ color: 0xa35a00, emissive: 0xff9a00, emissiveIntensity: 0 }); cyl(0.07, 0.07, 0.12, bm, 0.6, 0.86, 0.6, turret, 12);
+    const bm = new T.MeshStandardMaterial({ color: 0xa35a00, emissive: 0xff9a00, emissiveIntensity: 0 }); bm.name = "DYN_liftBm"; cyl(0.07, 0.07, 0.12, bm, 0.6, 0.86, 0.6, turret, 12);
     const boom = new T.Group(); g.add(boom);
     const b1 = new T.Mesh(new T.BoxGeometry(0.42, 0.46, 1).translate(0, 0, 0.5), org); b1.castShadow = true; boom.add(b1);
     const b2 = new T.Mesh(new T.BoxGeometry(0.3, 0.34, 1).translate(0, 0, 0.5), gr); b2.castShadow = true; boom.add(b2);
@@ -390,8 +390,8 @@
   for (const s of [-1, 1]) { box(0.035, 0.95, 0.035, M(0x23262a, 0.5, 0.4), 0, 0.37, s * 0.25, table).rotation.z = 0.55; box(0.035, 0.95, 0.035, M(0x23262a, 0.5, 0.4), 0, 0.37, s * 0.25, table).rotation.z = -0.55; }
   const maleta = new T.Group(); table.add(maleta); maleta.position.set(0, 0.76, 0);
   box(0.62, 0.42, 0.24, M(0x16181a, 0.45, 0.1), 0, 0.21, 0, maleta); box(0.2, 0.05, 0.05, M(0x16181a, 0.5), 0, 0.45, 0, maleta);
-  const dispMat = new T.MeshStandardMaterial({ color: 0x0c1a2a, emissive: 0x35c8ff, emissiveIntensity: 0 }); box(0.2, 0.09, 0.01, dispMat, -0.05, 0.27, -0.123, maleta);
-  const ledMat = new T.MeshStandardMaterial({ color: 0x0c2a10, emissive: 0x30ff50, emissiveIntensity: 0 }); box(0.07, 0.09, 0.01, ledMat, 0.17, 0.2, -0.123, maleta); box(0.1, 0.04, 0.01, M(0xf2d21a, 0.6), 0.17, 0.3, -0.123, maleta);
+  const dispMat = new T.MeshStandardMaterial({ color: 0x0c1a2a, emissive: 0x35c8ff, emissiveIntensity: 0 }); dispMat.name = "DYN_disp"; box(0.2, 0.09, 0.01, dispMat, -0.05, 0.27, -0.123, maleta);
+  const ledMat = new T.MeshStandardMaterial({ color: 0x0c2a10, emissive: 0x30ff50, emissiveIntensity: 0 }); ledMat.name = "DYN_led"; box(0.07, 0.09, 0.01, ledMat, 0.17, 0.2, -0.123, maleta); box(0.1, 0.04, 0.01, M(0xf2d21a, 0.6), 0.17, 0.3, -0.123, maleta);
   for (const y of [0.12, 0.2, 0.28, 0.36]) cyl(0.012, 0.012, 0.05, M(0xb9bcbf, 0.3, 0.9), -0.33, y, 0, maleta, 8).rotation.z = Math.PI / 2;
   // cones e tela
   const conePts = [[-26, 18], [-26, 14.7], [-26, 11.3], [-26, 8]]; const cones = [], fences = [];
@@ -402,12 +402,12 @@
     if (i > 0) { const f = box(0.02, 0.8, Math.abs(z - conePts[i - 1][1]), new T.MeshStandardMaterial({ color: 0xf2681c, transparent: true, opacity: 0.62, roughness: 0.9, side: T.DoubleSide }), x, 0.62, (z + conePts[i - 1][1]) / 2, scene); f.castShadow = false; fences.push(f); }
   });
   // mangueiras
-  const hoseY = new T.Mesh(new T.BufferGeometry(), M(0xe0b000, 0.5)); scene.add(hoseY); hoseY.castShadow = true;
-  const hoseB = [0, 1].map(() => { const m = new T.Mesh(new T.BufferGeometry(), M(0x1f8fd6, 0.45)); m.castShadow = true; scene.add(m); return m; });
+  const hoseY = new T.Mesh(new T.BufferGeometry(), M(0xe0b000, 0.5)); scene.add(hoseY); hoseY.castShadow = true; hoseY.userData.dyn = true;
+  const hoseB = [0, 1].map(() => { const m = new T.Mesh(new T.BufferGeometry(), M(0x1f8fd6, 0.45)); m.castShadow = true; m.userData.dyn = true; scene.add(m); return m; });
   function setHose(mesh, pts, fr, r) {
-    mesh.geometry.dispose(); if (fr <= 0.02) { mesh.visible = false; return; } mesh.visible = true;
+    mesh.geometry.dispose(); mesh.userData.dyn = true; mesh.userData.r = r; if (fr <= 0.02) { mesh.visible = false; mesh.userData.pts = null; return; } mesh.visible = true;
     const full = new T.CatmullRomCurve3(pts, false, "centripetal").getPoints(70), n = Math.max(3, Math.ceil(fr * 70));
-    mesh.geometry = new T.TubeGeometry(new T.CatmullRomCurve3(full.slice(0, n + 1)), n * 2, r, 8);
+    mesh.userData.pts = full.slice(0, n + 1); mesh.geometry = new T.TubeGeometry(new T.CatmullRomCurve3(full.slice(0, n + 1)), n * 2, r, 8);
   }
   // equipe
   const NAVY = 0x1d2f55, BLUE = 0x1f4fb0;
@@ -418,13 +418,13 @@
   // ferramentas na mão do operador A: marcador e lixa
   const pen = cyl(0.012, 0.012, 0.14, M(0xf5f5f5, 0.4), 0, 0.1, 0, wA.tool, 8); const sand = box(0.12, 0.035, 0.08, M(0x7a4a2a, 0.9), 0, 0.09, 0.0, wA.tool);
   // talabartes (cinto paraquedista atracado no cesto)
-  const lan = [-0.45, 0.45].map(() => { const m = new T.Mesh(new T.BufferGeometry(), M(0xe8b800, 0.7)); lift.basket.add(m); const ab = box(0.05, 0.12, 0.03, M(0x18191b, 0.8), 0, 0, 0, lift.basket); return { m, ab }; });
+  const lan = [-0.45, 0.45].map(() => { const m = new T.Mesh(new T.BufferGeometry(), M(0xe8b800, 0.7)); m.userData.dyn = true; lift.basket.add(m); const ab = box(0.05, 0.12, 0.03, M(0x18191b, 0.8), 0, 0, 0, lift.basket); return { m, ab }; });
   function setLan(i, w, vis) {
-    const L = lan[i]; L.m.visible = L.ab.visible = vis; if (!vis) return;
+    const L = lan[i]; L.m.visible = L.ab.visible = vis; L.m.userData.dyn = true; L.m.userData.r = 0.012; L.m.userData.pts = null; if (!vis) return;
     lift.basket.updateWorldMatrix(true, false);
     const d = lift.basket.worldToLocal(w.upper.localToWorld(V(0, 0.5, -0.16))), a = V(i ? 0.45 : -0.45, 0.15, -0.06);
     const mid = d.clone().lerp(a, 0.5).add(V(0, -0.16, 0.08));
-    L.m.geometry.dispose(); L.m.geometry = new T.TubeGeometry(new T.CatmullRomCurve3([d, mid, a]), 14, 0.012, 6);
+    L.m.geometry.dispose(); const lc = new T.CatmullRomCurve3([d, mid, a]); L.m.geometry = new T.TubeGeometry(lc, 14, 0.012, 6); L.m.userData.pts = lc.getPoints(14).map((q) => lift.basket.localToWorld(q));
     L.ab.position.copy(d.clone().lerp(mid, 0.6));
   }
 
@@ -446,12 +446,12 @@
     if (p < 0.72) return onPipe(lerp(LX + XH, LX - XH, (p - 0.5) / 0.22), TH1, PR + 0.01);
     return onPipe(LX - XH, lerp(TH1, TH0, (p - 0.72) / 0.28), PR + 0.01);
   }
-  const sandMat = new T.MeshStandardMaterial({ color: 0xa7a9ab, roughness: 0.38, metalness: 0.85, transparent: true, opacity: 0, envMapIntensity: 0.9 });
+  const sandMat = new T.MeshStandardMaterial({ color: 0xa7a9ab, roughness: 0.38, metalness: 0.85, transparent: true, opacity: 0, envMapIntensity: 0.9 }); sandMat.name = "DYN_sand";
   const sanded = new T.Mesh(arcGeo(PR + 0.0025, 2 * XH - 0.03, TH0 + 0.02, TH1 - TH0 - 0.04), sandMat); sanded.position.set(LX, PY, 0); scene.add(sanded);
   const dust = []; for (let i = 0; i < 16; i++) dust.push(puff(0xc9b56a));
   // massa bicomponente
   const PUTTY = 0x8d9a35;
-  const puttyMat = new T.MeshStandardMaterial({ color: 0xe8c010, roughness: 0.75 });
+  const puttyMat = new T.MeshStandardMaterial({ color: 0xe8c010, roughness: 0.75 }); puttyMat.name = "DYN_putty";
   const putty = new T.Mesh(new T.SphereGeometry(0.06, 18, 14), puttyMat); scene.add(putty); putty.castShadow = true;
   const puttyDk = []; for (let i = 0; i < 5; i++) { const d = new T.Mesh(new T.SphereGeometry(0.034, 12, 10), M(0x262626, 0.8)); putty.add(d); puttyDk.push(d); }
   // placa
@@ -487,21 +487,21 @@
   let basketW = V(0, 0, 0);
   const shots = [
     { a: 0, b: 6, p0: [-46, 17, 58], p1: [-33, 13, 44], t0: [-4, 8, -6], t1: [0, 7.5, -2] },
-    { a: 6, b: 10, p0: [-3.6, 8.3, 6.6], p1: [-2.6, 8.0, 5.4], t0: [0.6, 7.5, 0], t1: [0.8, 7.7, 0] },
+    { fs: 4, a: 6, b: 10, p0: [-3.6, 8.3, 6.6], p1: [-2.6, 8.0, 5.4], t0: [0.6, 7.5, 0], t1: [0.8, 7.7, 0] },
     { a: 10, b: 13, p0: [3.2, 1.7, 11.5], p1: [4.4, 2.1, 10.4], t0: [10.5, 6.6, 3.6], t1: [10.8, 6.8, 3.6] },
     { a: 13, b: 22, p0: [-34, 2.6, 31], p1: [-14, 4.2, 33], tf: (t) => V(lerp(-52, -14, sm(13, 21, t)), 1.6, 13.5) },
     { a: 22, b: 30, p0: [-8.5, 4.6, 1.8], p1: [-12.5, 3.7, 4.2], t0: [-17.5, 1.1, 15], t1: [-18, 1.1, 15.2] },
-    { a: 30, b: 37, p0: [-21.6, 2.0, 12.6], p1: [-20.6, 1.75, 13.5], t0: [-17.3, 1.05, 16.3], t1: [-17.4, 1.0, 16.2] },
-    { a: 37, b: 42, p0: [-13.9, 2.75, 6.2], p1: [-14.4, 2.65, 6.6], t0: [-16.3, 2.45, 8], t1: [-16.3, 2.45, 8] },
+    { fs: 4, a: 30, b: 37, p0: [-21.6, 2.0, 12.6], p1: [-20.6, 1.75, 13.5], t0: [-17.3, 1.05, 16.3], t1: [-17.4, 1.0, 16.2] },
+    { fs: 4, a: 37, b: 42, p0: [-13.9, 2.75, 6.2], p1: [-14.4, 2.65, 6.6], t0: [-16.3, 2.45, 8], t1: [-16.3, 2.45, 8] },
     { a: 42, b: 52.5, p0: [11, 4.5, 13.5], p1: [8.5, 8.8, 10], tf: () => basketW.clone().add(V(0, 0.6, 0)) },
     { a: 52.5, b: 55.5, p0: [-21.4, 1.85, 19.0], p1: [-21.0, 1.9, 18.7], t0: [-6, 3.8, 6], t1: [-6, 4.0, 6] },
-    { a: 55.5, b: 59.7, p0: [-1.05, 8.95, -0.45], p1: [-0.75, 8.85, -0.35], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },      // demarcação
-    { a: 59.7, b: 64.1, p0: [-0.75, 8.35, -0.5], p1: [-0.5, 8.25, -0.42], t0: [0.4, 7.44, 0.38], t1: [0.4, 7.44, 0.38] },       // lixamento
-    { a: 64.1, b: 71, p0: [1.75, 7.95, 0.12], p1: [1.6, 7.88, 0.18], t0: [0.86, 7.36, 0.8], t1: [0.84, 7.36, 0.8] },        // mistura da massa
-    { a: 71, b: 75, p0: [-0.6, 8.7, -0.15], p1: [-0.35, 8.6, -0.05], t0: [0.42, 7.5, 0.72], t1: [0.42, 7.5, 0.72] },            // massa na placa
-    { a: 75, b: 80, p0: [-1.05, 8.95, -0.45], p1: [-0.8, 8.8, -0.38], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },           // aplicação da placa
-    { a: 80, b: 86, p0: [-1.7, 9.0, 3.1], p1: [-1.3, 8.8, 2.9], t0: [0.35, 7.35, 0.4], t1: [0.35, 7.35, 0.4] },               // cintas (cintos e talabartes à vista)
-    { a: 86, b: 92.4, p0: [-0.65, 8.75, -0.35], p1: [-0.35, 8.62, -0.25], t0: [0.4, 7.47, 0.4], t1: [0.4, 7.47, 0.4] },         // acabamento
+    { fs: 4, a: 55.5, b: 59.7, p0: [-1.05, 8.95, -0.45], p1: [-0.75, 8.85, -0.35], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },      // demarcação
+    { fs: 4, a: 59.7, b: 64.1, p0: [-0.75, 8.35, -0.5], p1: [-0.5, 8.25, -0.42], t0: [0.4, 7.44, 0.38], t1: [0.4, 7.44, 0.38] },       // lixamento
+    { fs: 4, a: 64.1, b: 71, p0: [1.75, 7.95, 0.12], p1: [1.6, 7.88, 0.18], t0: [0.86, 7.36, 0.8], t1: [0.84, 7.36, 0.8] },        // mistura da massa
+    { fs: 4, a: 71, b: 75, p0: [-0.6, 8.7, -0.15], p1: [-0.35, 8.6, -0.05], t0: [0.42, 7.5, 0.72], t1: [0.42, 7.5, 0.72] },            // massa na placa
+    { fs: 4, a: 75, b: 80, p0: [-1.05, 8.95, -0.45], p1: [-0.8, 8.8, -0.38], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },           // aplicação da placa
+    { fs: 4, a: 80, b: 86, p0: [-1.7, 9.0, 3.1], p1: [-1.3, 8.8, 2.9], t0: [0.35, 7.35, 0.4], t1: [0.35, 7.35, 0.4] },               // cintas (cintos e talabartes à vista)
+    { fs: 4, a: 86, b: 92.4, p0: [-0.65, 8.75, -0.35], p1: [-0.35, 8.62, -0.25], t0: [0.4, 7.47, 0.4], t1: [0.4, 7.47, 0.4] },         // acabamento
     { a: 92.4, b: 95.2, p0: [4.4, 2.1, 10.4], p1: [3.8, 2.0, 11], t0: [10.8, 6.8, 3.6], t1: [10.6, 6.7, 3.6] },
     { a: 95.2, b: 103.3, p0: [-25, 6.5, 30], p1: [-33, 11.5, 40], t0: [-9, 3.2, 9], t1: [-8, 3.5, 6] },
   ];
@@ -694,8 +694,36 @@
     let sh = shots[shots.length - 1]; for (const s of shots) if (t >= s.a && t < s.b) { sh = s; break; }
     const kl = clamp((t - sh.a) / (sh.b - sh.a)), kk = 0.5 * kl + 0.5 * kl * kl * (3 - 2 * kl);
     camera.position.set(lerp(sh.p0[0], sh.p1[0], kk), lerp(sh.p0[1], sh.p1[1], kk), lerp(sh.p0[2], sh.p1[2], kk));
-    camera.lookAt(sh.tf ? sh.tf(t) : V(lerp(sh.t0[0], sh.t1[0], kk), lerp(sh.t0[1], sh.t1[1], kk), lerp(sh.t0[2], sh.t1[2], kk)));
-    renderer.render(scene, camera);
+    const tgv = sh.tf ? sh.tf(t) : V(lerp(sh.t0[0], sh.t1[0], kk), lerp(sh.t0[1], sh.t1[1], kk), lerp(sh.t0[2], sh.t1[2], kk));
+    camera.lookAt(tgv); camFocus = camera.position.distanceTo(tgv); camFs = sh.fs || 0;
+    if (!window.NO_RENDER) renderer.render(scene, camera);
     return true;
   };
+  // ---------- exportação para o Blender ----------
+  let camFocus = 10, camFs = 0;
+  const xMesh = [], xSpr = [], xDyn = [], xMat = [];
+  window.renderFrame(0);
+  scene.traverse((o) => { if (o.isSprite) xSpr.push(o); else if (o.isMesh) { if (o.userData.dyn) xDyn.push(o); else { o.name = "m" + xMesh.length; xMesh.push(o); const m = o.material; if (m.name && m.name.startsWith("DYN_") && !xMat.includes(m)) xMat.push(m); } } });
+  let nm = 0; const seenM = new Set(); xMesh.forEach((o) => { const m = o.material; if (!seenM.has(m)) { seenM.add(m); if (!m.name) m.name = "mat" + nm++; } });
+  const prevM = [], prevV = [];
+  const effVis = (o) => { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; };
+  const r5 = (x) => Math.round(x * 1e5) / 1e5;
+  window.exportMeta = () => ({ nMesh: xMesh.length, nSpr: xSpr.length, nDyn: xDyn.length, sprCol: xSpr.map((s) => s.material.color.getHex()), dynCol: xDyn.map((d) => d.material.color.getHex()), mats: xMat.map((m) => m.name),
+    lights: beacons.filter((b) => b.pl).map((b) => b.pl.position.toArray()) });
+  window.exportState = (t, full) => {
+    window.NO_RENDER = true; window.renderFrame(t); scene.updateMatrixWorld(true); camera.updateMatrixWorld(true);
+    const mc = [], vc = [];
+    xMesh.forEach((o, i) => {
+      const v = effVis(o) ? 1 : 0; if (full || prevV[i] !== v) { vc.push(i, v); prevV[i] = v; }
+      if (!v && !full) return;
+      const e = o.matrixWorld.elements, p = prevM[i]; let ch = full || !p;
+      if (!ch) for (let k = 0; k < 16; k++) if (Math.abs(e[k] - p[k]) > 1e-6) { ch = true; break; }
+      if (ch) { prevM[i] = Array.from(e); mc.push(i, ...prevM[i].map(r5)); }
+    });
+    const sp = []; xSpr.forEach((s, i) => { const op = effVis(s) ? s.material.opacity : 0; if (op > 0.004) sp.push(i, r5(s.position.x), r5(s.position.y), r5(s.position.z), r5(s.scale.x), r5(op)); });
+    const dy = xDyn.map((d) => (effVis(d) && d.userData.pts) ? { r: d.userData.r, p: d.userData.pts.flatMap((q) => [r5(q.x), r5(q.y), r5(q.z)]) } : null);
+    return { t, cam: Array.from(camera.matrixWorld.elements).map(r5), fov: camera.fov, focus: r5(camFocus), fs: camFs, mc, vc, sp, dy,
+      mat: xMat.map((m) => [r5(m.emissiveIntensity || 0), r5(m.opacity), m.color.getHex()]), li: beacons.filter((b) => b.pl).map((b) => r5(b.pl.intensity)) };
+  };
+  window.sceneForExport = () => { xDyn.forEach((d) => d.parent && d.parent.remove(d)); xSpr.forEach((d) => d.parent && d.parent.remove(d)); return scene; };
 })();
