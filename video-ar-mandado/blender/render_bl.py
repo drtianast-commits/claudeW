@@ -206,6 +206,8 @@ with gzip.open(os.path.join(HERE, "frames.jsonl.gz"), "rt") as fh:
         rot = cm.to_3x3().normalized().to_4x4()
         for o in sprites: o.hide_render = True
         sp = st["sp"]
+        _m = float(os.environ.get("SPMIN", "0"))   # descarta fumaça residual quase transparente (aparece escura contra o céu)
+        if _m > 0: sp = [v for k in range(0, len(sp), 6) if sp[k + 5] >= _m for v in sp[k:k + 6]]
         for k in range(0, len(sp), 6):
             o = sprites[sp[k]]; o.hide_render = False
             o.matrix_world = Matrix.Translation(C @ Vector(sp[k + 1:k + 4])) @ rot @ Matrix.Scale(sp[k + 4], 4)
