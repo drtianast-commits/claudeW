@@ -211,7 +211,7 @@
     const web = M(0x18191b, 0.8), webY = M(0xe8b800, 0.7);
     const g = new T.Group(); const upper = new T.Group(); upper.position.y = 0.9; g.add(upper);
     // tronco
-    const torso = new T.Mesh(new T.CapsuleGeometry(0.15, 0.3, 6, 16), o.vest ? M(0xee6f12, 0.8) : suit); torso.position.y = 0.33; torso.scale.set(1.28, 1, 0.84); torso.castShadow = true; upper.add(torso);
+    const torso = new T.Mesh(new T.CapsuleGeometry(0.15, 0.3, 6, 16), o.vest ? M(o.vestColor || 0xee6f12, 0.8) : suit); torso.position.y = 0.33; torso.scale.set(1.28, 1, 0.84); torso.castShadow = true; upper.add(torso);
     const hipM = new T.Mesh(new T.SphereGeometry(0.17, 14, 10), suit); hipM.position.y = 0.02; hipM.scale.set(1.2, 0.8, 0.85); hipM.castShadow = true; upper.add(hipM);
     for (const y of [0.2, 0.43]) { const s = cyl(0.153, 0.153, 0.045, stripe, 0, y, 0, upper, 18); s.scale.set(1.29, 1, 0.85); s.castShadow = false; }
     const belt = cyl(0.156, 0.156, 0.06, web, 0, 0.06, 0, upper, 18); belt.scale.set(1.3, 1, 0.87);
@@ -224,6 +224,7 @@
     box(0.03, 0.03, 0.26, hcol, 0, 0.165, 0, head);
     box(0.16, 0.05, 0.02, M(0x101010, 0.2, 0.3), 0, 0.005, 0.105, head);          // óculos
     const strapJ = new T.Mesh(new T.TorusGeometry(0.118, 0.006, 6, 20, Math.PI), web); strapJ.rotation.z = Math.PI; strapJ.position.y = 0.03; head.add(strapJ);
+    if (o.female) { const hair = M(0x2a1a12, 0.85); sph(0.118, hair, 0, -0.02, -0.03, head).scale.set(0.95, 1.0, 0.95); sph(0.045, hair, 0, -0.08, -0.125, head); const pt = new T.Mesh(new T.CapsuleGeometry(0.034, 0.2, 4, 10), hair); pt.position.set(0, -0.21, -0.15); pt.rotation.x = 0.22; pt.castShadow = true; head.add(pt); g.scale.setScalar(0.94); }
     // máscara facial
     const mask = new T.Group(); head.add(mask); mask.visible = false;
     const visor = new T.Mesh(new T.SphereGeometry(0.128, 20, 14, 0, Math.PI, 0.3, 1.85), new T.MeshStandardMaterial({ color: 0xa8d4e8, roughness: 0.05, metalness: 0.4, transparent: true, opacity: 0.5, envMapIntensity: 1.2 }));
@@ -415,6 +416,10 @@
   const wC = makeWorker({ suit: NAVY, vest: true }), wD = makeWorker({ suit: NAVY, vest: true });
   scene.remove(wA.g); lift.basket.add(wA.g); wA.g.rotation.y = Math.PI;
   wC.carry.visible = true; wD.radio.visible = true;
+  // técnica em segurança do trabalho (acompanha a atividade no solo)
+  const wE = makeWorker({ suit: NAVY, vest: true, vestColor: 0xcfe326, helmet: 0x1f9d55, female: true });
+  const clip = new T.Group(); wE.upper.add(clip); box(0.23, 0.31, 0.012, M(0x6b4a2c, 0.7), 0, 0, 0, clip); box(0.2, 0.27, 0.004, M(0xf6f6f2, 0.8), 0, -0.01, 0.008, clip).castShadow = false; box(0.09, 0.03, 0.012, M(0xb9bcbf, 0.3, 0.8), 0, 0.145, 0.008, clip);
+  const watch = box(0.05, 0.03, 0.05, M(0x15171a, 0.4, 0.5), 0, 0, 0, wE.upper);
   // ferramentas na mão do operador A: marcador e lixa
   const pen = cyl(0.012, 0.012, 0.14, M(0xf5f5f5, 0.4), 0, 0.1, 0, wA.tool, 8); const sand = box(0.12, 0.035, 0.08, M(0x7a4a2a, 0.9), 0, 0.09, 0.0, wA.tool);
   // talabartes (cinto paraquedista atracado no cesto)
@@ -481,7 +486,7 @@
   // gás
   const GN = 170, gas = []; for (let i = 0; i < GN; i++) gas.push(puff(0xeef2dc));
   const exh = []; for (let i = 0; i < 12; i++) exh.push(puff(0x55585c));
-  const G = (t) => t < 3.5 ? 0 : t < 4.2 ? (t - 3.5) / 0.7 : t < 76.9 ? 1 : t < 78.6 ? lerp(1, 0.3, (t - 76.9) / 1.7) : t < 83.6 ? 0.3 : t < 85.4 ? lerp(0.3, 0, (t - 83.6) / 1.8) : 0;
+  const G = (t) => t < 3.5 ? 0 : t < 4.2 ? (t - 3.5) / 0.7 : t < 82.9 ? 1 : t < 84.6 ? lerp(1, 0.3, (t - 82.9) / 1.7) : t < 88.4 ? 0.3 : t < 90.2 ? lerp(0.3, 0, (t - 88.4) / 1.8) : 0;
 
   // ---------- câmeras ----------
   let basketW = V(0, 0, 0);
@@ -495,19 +500,24 @@
     { fs: 4, a: 37, b: 42, p0: [-13.9, 2.75, 6.2], p1: [-14.4, 2.65, 6.6], t0: [-16.3, 2.45, 8], t1: [-16.3, 2.45, 8] },
     { a: 42, b: 52.5, p0: [11, 4.5, 13.5], p1: [8.5, 8.8, 10], tf: () => basketW.clone().add(V(0, 0.6, 0)) },
     { a: 52.5, b: 55.5, p0: [-21.4, 1.85, 19.0], p1: [-21.0, 1.9, 18.7], t0: [-6, 3.8, 6], t1: [-6, 4.0, 6] },
-    { fs: 4, a: 55.5, b: 59.7, p0: [-1.05, 8.95, -0.45], p1: [-0.75, 8.85, -0.35], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },      // demarcação
-    { fs: 4, a: 59.7, b: 64.1, p0: [-0.75, 8.35, -0.5], p1: [-0.5, 8.25, -0.42], t0: [0.4, 7.44, 0.38], t1: [0.4, 7.44, 0.38] },       // lixamento
-    { fs: 4, a: 64.1, b: 71, p0: [1.75, 7.95, 0.12], p1: [1.6, 7.88, 0.18], t0: [0.86, 7.36, 0.8], t1: [0.84, 7.36, 0.8] },        // mistura da massa
-    { fs: 4, a: 71, b: 75, p0: [-0.6, 8.7, -0.15], p1: [-0.35, 8.6, -0.05], t0: [0.42, 7.5, 0.72], t1: [0.42, 7.5, 0.72] },            // massa na placa
-    { fs: 4, a: 75, b: 80, p0: [-1.05, 8.95, -0.45], p1: [-0.8, 8.8, -0.38], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },           // aplicação da placa
-    { fs: 4, a: 80, b: 86, p0: [-1.7, 9.0, 3.1], p1: [-1.3, 8.8, 2.9], t0: [0.35, 7.35, 0.4], t1: [0.35, 7.35, 0.4] },               // cintas (cintos e talabartes à vista)
-    { fs: 4, a: 86, b: 92.4, p0: [-0.65, 8.75, -0.35], p1: [-0.35, 8.62, -0.25], t0: [0.4, 7.47, 0.4], t1: [0.4, 7.47, 0.4] },         // acabamento
-    { a: 92.4, b: 95.2, p0: [4.4, 2.1, 10.4], p1: [3.8, 2.0, 11], t0: [10.8, 6.8, 3.6], t1: [10.6, 6.7, 3.6] },
-    { a: 95.2, b: 103.3, p0: [-25, 6.5, 30], p1: [-33, 11.5, 40], t0: [-9, 3.2, 9], t1: [-8, 3.5, 6] },
+    { fs: 4, a: 55.5, b: 61.5, p0: [-1.9, 9.1, 3.3], p1: [-1.5, 8.9, 3.0], t0: [0.35, 7.35, 0.4], t1: [0.35, 7.35, 0.4] },             // colocação das cintas
+    { fs: 4, a: 61.5, b: 65.7, p0: [-1.05, 8.95, -0.45], p1: [-0.75, 8.85, -0.35], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },      // demarcação
+    { fs: 4, a: 65.7, b: 70.1, p0: [-0.75, 8.35, -0.5], p1: [-0.5, 8.25, -0.42], t0: [0.4, 7.44, 0.38], t1: [0.4, 7.44, 0.38] },       // lixamento
+    { fs: 4, a: 70.1, b: 77, p0: [1.75, 7.95, 0.12], p1: [1.6, 7.88, 0.18], t0: [0.86, 7.36, 0.8], t1: [0.84, 7.36, 0.8] },        // mistura da massa
+    { fs: 4, a: 77, b: 81, p0: [-0.6, 8.7, -0.15], p1: [-0.35, 8.6, -0.05], t0: [0.42, 7.5, 0.72], t1: [0.42, 7.5, 0.72] },            // massa na placa
+    { fs: 4, a: 81, b: 85.6, p0: [-1.05, 8.95, -0.45], p1: [-0.8, 8.8, -0.38], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },         // aplicação da placa
+    { fs: 4, a: 85.6, b: 90.6, p0: [-1.7, 9.0, 3.1], p1: [-1.3, 8.8, 2.9], t0: [0.35, 7.35, 0.4], t1: [0.35, 7.35, 0.4] },             // cintas sobre a placa
+    { a: 90.6, b: 92.8, p0: [4.4, 2.1, 10.4], p1: [3.8, 2.0, 11], t0: [10.8, 6.8, 3.6], t1: [10.6, 6.7, 3.6] },                        // alarme desliga
+    { fs: 4, a: 92.8, b: 95.8, p0: [-0.75, 8.8, -0.4], p1: [-0.6, 8.72, -0.34], t0: [0.4, 7.47, 0.4], t1: [0.4, 7.47, 0.4] },          // cura
+    { fs: 5.6, a: 95.8, b: 98.8, p0: [-14.0, 1.95, 16.75], p1: [-13.75, 1.95, 16.55], t0: [-10.6, 2.05, 11.4], t1: [-10.6, 2.1, 11.4] },         // técnica de segurança acompanha a cura
+    { fs: 4, a: 98.8, b: 103.3, p0: [-1.0, 8.9, -0.5], p1: [-0.8, 8.8, -0.4], t0: [0.3, 7.45, 0.45], t1: [0.3, 7.45, 0.45] },          // retirada das cintas
+    { fs: 4, a: 103.3, b: 109.4, p0: [-0.65, 8.75, -0.35], p1: [-0.35, 8.62, -0.25], t0: [0.4, 7.47, 0.4], t1: [0.4, 7.47, 0.4] },     // acabamento
+    { fs: 4, a: 109.4, b: 112.4, p0: [-1.6, 8.9, 3.2], p1: [-1.8, 9.0, 3.4], t0: [0.35, 7.4, 0.4], t1: [0.35, 7.4, 0.4] },
+    { a: 112.4, b: 124.1, p0: [-25, 6.5, 30], p1: [-33, 11.5, 40], t0: [-9, 3.2, 9], t1: [-8, 3.5, 6] },
   ];
 
   // ---------- quadro ----------
-  window.DURATION = 103.2;
+  window.DURATION = 124;
   window.renderFrame = function (t) {
     // gás
     for (let i = 0; i < GN; i++) {
@@ -526,7 +536,7 @@
       s.position.set(bx + 26 * u + Math.sin(i * 3 + t * 0.3) * 2 * u, by + 9 * Math.sqrt(u), bz + Math.cos(i * 5.1) * 3 * u);
       const sz = 3 + u * 16; s.scale.set(sz, sz, 1); s.material.opacity = 0.42 * (1 - u) * Math.min(1, u * 8);
     }
-    const alarm = t >= 5.5 && t < 92.6;
+    const alarm = t >= 5.5 && t < 91.4;
     for (const b of beacons) { const p = alarm ? Math.pow(0.5 + 0.5 * Math.sin(t * 9 + b.ph), 2) : 0; b.mat.emissiveIntensity = p * 4.5; if (b.pl) b.pl.intensity = p * 110; }
     sockArea.rotation.z = Math.sin(t * 2.3) * 0.06 - 0.1; sockArea.rotation.y = Math.sin(t * 1.1) * 0.08;
     trailer.sock.rotation.z = Math.sin(t * 2.7 + 1) * 0.07 - 0.12; trailer.sock.rotation.y = Math.sin(t * 1.3) * 0.1;
@@ -537,7 +547,7 @@
     truck.g.visible = trailer.g.visible = vis; truck.g.position.set(tx, 0, TZ); trailer.g.position.set(tx - 5.6, 0, TZ);
     for (const w of truck.wheels) w.rotation.y = -(tx / 0.42); for (const w of trailer.wheels) w.rotation.y = -(tx / 0.33);
     const flash = (ph) => (Math.sin(t * 11 + ph) > 0.3 ? 3.2 : 0.1);
-    truck.bm.emissiveIntensity = vis && t < 95 ? flash(0) : 0; lift.bm.emissiveIntensity = vis ? flash(1.5) : 0;
+    truck.bm.emissiveIntensity = vis && t < 112.4 ? flash(0) : 0; lift.bm.emissiveIntensity = vis ? flash(1.5) : 0;
     trailer.chocks.visible = t >= 27.2;
     const engOn = t >= 29.5;
     trailer.eng.position.x = -0.45 + (engOn ? Math.sin(t * 61) * 0.006 : 0); trailer.eng.position.y = 1.62 + (engOn ? Math.sin(t * 47) * 0.006 : 0);
@@ -551,7 +561,7 @@
     const cx = lerp(lerp(-104, -20, k1), -5.5, k2);
     lift.g.visible = vis; lift.g.position.set(cx, 0, LZ);
     for (const w of lift.wheels) w.rotation.y = -(cx / 0.5);
-    const kb = sm(46.8, 52.6, t) - sm(95, 102.3, t);
+    const kb = sm(46.8, 52.6, t) - sm(112.4, 119.7, t);
     const P = V(-0.9, 1.75, 0);
     const yaw = lerp(0, -0.7509, kb), rad = lerp(4.1, 9.233, Math.pow(kb, 1.3)), hy = lerp(1.3, 6.4, Math.pow(kb, 0.75));
     const att = V(P.x + Math.cos(yaw) * rad, hy, P.z + Math.sin(yaw) * rad);
@@ -563,38 +573,41 @@
     lift.g.updateMatrixWorld(true);
 
     // ---- fases do reparo ----
-    const wMark = win(55.7, 59.6, t, 0.5), pMark = lin(56.2, 59.2, t);
-    const wSand = win(59.9, 64.2, t, 0.5), kSand = sm(60.4, 63.8, t);
-    const wFetch = win(64.2, 65.6, t, 0.5), wKnead = win(65.3, 70.9, t, 0.5), kMix = sm(65.8, 70.2, t);
-    const kWork = sm(70.6, 71.7, t), kOn = sm(75.1, 77.6, t), wSpread = win(71.6, 75.0, t, 0.5), kSpread = sm(71.9, 74.7, t);
-    const wHold = win(70.9, 80.2, t, 0.5);
-    const wStrap = win(80.1, 85.9, t, 0.5), kTight = sm(83.6, 85.4, t);
-    const wFin = win(86.2, 91.8, t, 0.5), kFin = sm(86.7, 91.3, t);
-    const thumbs = win(91.7, 94.2, t, 0.5);
-    const nearK = sm(55, 55.6, t) - sm(94.4, 95, t);
-    const backB = win(64.0, 71.2, t, 0.6);
+    const wS1 = win(55.6, 61.4, t, 0.5), wS2 = win(85.7, 90.6, t, 0.5), wS3 = win(98.8, 103.2, t, 0.5);
+    const kSnug = sm(59.6, 61.2, t), kLoose = sm(85.8, 86.5, t), kSlide = sm(86.5, 88.2, t), kTight = sm(88.4, 90.2, t), kRel = sm(99.0, 99.8, t);
+    const wMark = win(61.7, 65.6, t, 0.5), pMark = lin(62.2, 65.2, t);
+    const wSand = win(65.9, 70.2, t, 0.5), kSand = sm(66.4, 69.8, t);
+    const wFetch = win(70.2, 71.6, t, 0.5), wKnead = win(71.3, 76.9, t, 0.5), kMix = sm(71.8, 76.2, t);
+    const kWork = sm(76.6, 77.7, t), kOn = sm(81.1, 83.6, t), wSpread = win(77.6, 81.0, t, 0.5), kSpread = sm(77.9, 80.7, t);
+    const wHold = win(76.9, 86.0, t, 0.5);
+    const wStrap = Math.max(wS1, wS2, wS3), strapX = lerp(0.52, 0.19, kSlide);
+    const wFin = win(103.4, 109.0, t, 0.5), kFin = sm(103.9, 108.5, t);
+    const thumbs = win(109.3, 111.9, t, 0.5);
+    const nearK = sm(55, 55.6, t) - sm(111.7, 112.3, t);
+    const backB = win(70.0, 77.2, t, 0.6);
+    const cure = win(92.8, 98.8, t, 0.6);
 
-    hole.visible = t < 77.3; stain.visible = t < 61.5;
+    hole.visible = t < 83.3; stain.visible = t < 67.5;
     // marcação
-    for (const k of marks) k.m.visible = pMark > k.p && t < 78.2;
+    for (const k of marks) k.m.visible = pMark > k.p && t < 84.2;
     // lixado
-    sandMat.opacity = kSand * 0.96; sanded.visible = kSand > 0.01 && t < 78.2;
+    sandMat.opacity = kSand * 0.96; sanded.visible = kSand > 0.01 && t < 84.2;
     const sandPt = onPipe(LX + 0.24 * Math.sin(t * 2.1), LA + 0.42 * Math.sin(t * 9.5), PR + 0.03);
     for (let i = 0; i < dust.length; i++) { const s = dust[i], u = frac(t * 1.4 + i / dust.length); s.position.set(sandPt.x + 0.9 * u + Math.sin(i * 5) * 0.1, sandPt.y + 0.25 * u + 0.05, sandPt.z + Math.cos(i * 3.3) * 0.12 * u); const sz = 0.06 + u * 0.35; s.scale.set(sz, sz, 1); s.material.opacity = wSand * 0.35 * (1 - u); }
     // placa
     const plateWorkPos = V(0.42, 7.5, 0.74), plateWorkRot = 1.785;
     lift.basket.updateWorldMatrix(true, false);
     const pc0 = lift.basket.localToWorld(V(-0.05, 0.42, -0.2));
-    plateCarried.visible = t < 70.6; plateWorld.visible = t >= 70.6;
+    plateCarried.visible = t < 76.6; plateWorld.visible = t >= 76.6;
     const pPos = pc0.clone().lerp(plateWorkPos, kWork).lerp(PLATE_ON, kOn); pPos.y += Math.sin(kOn * Math.PI) * 0.16; pPos.z += Math.sin(kOn * Math.PI) * 0.22;
     plateWorld.position.copy(pPos); plateWorld.rotation.x = lerp(lerp(-1.35, plateWorkRot, kWork), 0, kOn);
     innerPutty.visible = kSpread > 0.01; innerPutty.scale.set(Math.max(0.02, kSpread), 1, 1);
     // massa na mão
     const Bx = basketW.x + 0.45;
     const kneadC = V(Bx + 0.02, basketW.y + 0.84, basketW.z - 0.86);
-    putty.visible = t >= 65.2 && t < 74.9;
+    putty.visible = t >= 71.2 && t < 80.9;
     if (putty.visible) {
-      const toPlate = sm(71.4, 72.2, t);
+      const toPlate = sm(77.4, 78.2, t);
       putty.position.copy(kneadC).lerp(plateWorld.position.clone().add(V(0.05, 0.05, 0)), toPlate);
       const sq = 1 + 0.25 * Math.sin(t * 9); const sh = 1 - 0.85 * kSpread;
       putty.scale.set(1.25 * sq * sh, (1 / sq) * sh, 1.0 * sh); putty.rotation.set(t * 2.2, t * 1.7, t * 1.3);
@@ -603,8 +616,11 @@
     }
     // cintas
     straps.forEach((s, j) => {
-      const p = sm(80.3 + j * 1.3, 82.4 + j * 1.3, t), R = lerp(0.6, 0.5445, kTight);
-      s.segs.forEach((m, i) => { m.parent.visible = i < p * s.segs.length; m.position.z = R + Math.sin(i * 0.9 + t * 9) * 0.012 * (1 - kTight) * (p < 1 ? 1 : 0.4); });
+      const p = sm(55.9 + j * 1.3, 58.0 + j * 1.3, t) - sm(99.9 + j * 1.2, 101.7 + j * 1.2, t);
+      const R = t < 85.8 ? lerp(0.6, 0.506, kSnug) : t < 95 ? lerp(lerp(0.506, 0.6, kLoose), 0.5445, kTight) : lerp(0.5445, 0.6, kRel);
+      const slack = t < 85.8 ? 1 - kSnug : t < 95 ? Math.min(kLoose, 1 - kTight) : kRel;
+      s.g.position.x = LX + (j ? 1 : -1) * strapX;
+      s.segs.forEach((m, i) => { m.parent.visible = i < p * s.segs.length; m.position.z = R + Math.sin(i * 0.9 + t * 9) * 0.012 * slack * (p < 1 ? 1 : 0.4); });
       s.rat.visible = p >= 0.999; s.rb.position.z = R + 0.028;
     });
     // acabamento
@@ -622,7 +638,7 @@
     if (wMark > 0) { aR = penPos(pMark).add(V(0, 0.07, 0.03)); awR = wMark; }
     else if (wSand > 0) { aR = sandPt.clone().add(V(0, 0.05, 0.02)); awR = wSand; aL = onPipe(LX - 0.42, 0.55, PR + 0.06); awL = wSand; }
     else if (wHold > 0) { aL = plateWorld.position.clone().add(V(-0.28, 0.02, 0.06)); awL = wHold; aR = plateWorld.position.clone().add(V(-0.1, 0.04, 0.12)); awR = wHold * kOn; }
-    else if (wStrap > 0) { const th = 0.25 + 0.12 * Math.sin(t * 7); aL = onPipe(LX - 0.26, th, 0.62); aR = onPipe(LX - 0.12, th + 0.25, 0.62); awL = awR = wStrap; }
+    else if (wStrap > 0) { const th = 0.25 + 0.12 * Math.sin(t * 7); aL = onPipe(LX - strapX - 0.07, th, 0.62); aR = onPipe(LX - strapX + 0.07, th + 0.25, 0.62); awL = awR = wStrap; }
     wA.tool.visible = wMark > 0.3 || wSand > 0.3; pen.visible = wMark > 0.3; sand.visible = wSand > 0.3;
     wA.pose({ lean: 0.42 * workA + 0.1 * wFin, headX: 0.25 * workA + 0.2 * wFin, handR: aR, wR: awR, handL: aL, wL: awL,
       locL: mA > 0 ? faceL : (thumbs > 0 ? V(-0.34, 0.95, 0.12) : null), locR: mA > 0 ? faceR : null,
@@ -638,13 +654,13 @@
         const tray = lift.basket.localToWorld(V(0.74, 0.92, -0.6));
         const kn = t * 8.5;
         bR = kneadC.clone().add(V(0.075 - 0.03 * Math.sin(kn), 0.01 + 0.035 * Math.cos(kn), 0.02 * Math.sin(kn + 1))); bL = kneadC.clone().add(V(-0.075 + 0.03 * Math.sin(kn), -0.01 - 0.035 * Math.cos(kn), -0.02 * Math.sin(kn + 1)));
-        if (wKnead < 1 && t < 66) { bR.lerp(tray, 1 - sm(65.0, 65.7, t)); }
+        if (wKnead < 1 && t < 72) { bR.lerp(tray, 1 - sm(71.0, 71.7, t)); }
         bwR = Math.max(wKnead, wFetch); bwL = wKnead;
       } else if (wSpread > 0 && kOn <= 0) {
         bR = plateWorld.position.clone().add(V(0.2 * Math.sin(t * 3.4), 0.07, 0.07 * Math.sin(t * 5.3))); bwR = wSpread; bL = plateWorld.position.clone().add(V(0.3, 0.02, 0.05)); bwL = wHold;
       } else if (wHold > 0) {
         bR = plateWorld.position.clone().add(V(0.26, 0.03, 0.08)); bL = plateWorld.position.clone().add(V(0.1, 0.05, 0.12)); bwR = wHold; bwL = wHold * kOn;
-      } else if (wStrap > 0) { const th = 0.3 + 0.12 * Math.sin(t * 7 + 1); bL = onPipe(LX + 0.12, th + 0.25, 0.62); bR = onPipe(LX + 0.27, th, 0.62); bwL = bwR = wStrap; }
+      } else if (wStrap > 0) { const th = 0.3 + 0.12 * Math.sin(t * 7 + 1); bL = onPipe(LX + strapX - 0.07, th + 0.25, 0.62); bR = onPipe(LX + strapX + 0.07, th, 0.62); bwL = bwR = wStrap; }
       else if (wFin > 0) { bR = onPipe(LX + 0.34 * Math.sin(t * 1.9), LA + 0.5 * Math.sin(t * 4.3), 0.6); bwR = wFin; bL = onPipe(LX + 0.42, 0.5, 0.58); bwL = wFin; }
       wB.pose({ lean: 0.42 * workB + 0.12 * wKnead, headX: 0.25 * workB + 0.3 * wKnead, handR: bR, wR: bR ? bwR : (mB > 0 ? mB : thumbs), handL: bL, wL: bL ? bwL : mB,
         locL: mB > 0 ? faceL : null, locR: mB > 0 ? faceR : (thumbs > 0 ? V(0.34, 0.95, 0.12) : null) });
@@ -663,7 +679,7 @@
 
     // ---- vigias ----
     wC.g.visible = wD.g.visible = t >= 22;
-    const cheer = win(96.5, 101.5, t, 1);
+    const cheer = win(113.9, 118.9, t, 1);
     const pc = pathAt([[-9.5, 15.3], [-17.3, 15.2], [-17.8, 16.3]], 22.2, 26, t);
     wC.g.position.set(pc.x, 0, pc.z); wC.carry.visible = t < 26; wC.g.rotation.y = pc.moving ? pc.heading : Math.PI;
     if (pc.moving) wC.pose({ walk: pc.dist * 3.2 });
@@ -673,10 +689,20 @@
     wD.g.position.set(pd.x, 0, pd.z);
     const faceLeak = Math.atan2(-2 - -19.4, 4 - 16.2);
     wD.g.rotation.y = pd.moving ? pd.heading : (dMove2 ? faceLeak : Math.PI / 2);
-    const radioUp = win(36, 95.5, t, 1);
+    const radioUp = win(36, 112.9, t, 1);
     if (pd.moving) wD.pose({ walk: pd.dist * 3.2 });
     else if (!dMove2) wD.pose({ locL: V(-0.15, 0.5 + 0.04 * Math.sin(t * 5), 0.45), locR: V(0.15, 0.42, 0.45), lean: 0.2 });
     else wD.pose({ locL: V(-0.16, 0.74, 0.16), wL: radioUp, locR: V(0.34, 0.98, 0.1), wR: cheer, headX: -0.15 * radioUp });
+    // técnica em segurança do trabalho
+    wE.g.visible = t >= 22;
+    const pe = pathAt([[-8.6, 14.9], [-10.5, 13.7], [-12.5, 13.4]], 24, 27.5, t);
+    wE.g.position.set(pe.x, 0, pe.z); wE.g.rotation.y = pe.moving ? pe.heading : (t < 24 ? -Math.PI / 2 : Math.atan2(0.35 + 12.5, -13.4));
+    const note = t >= 27.5 ? Math.pow(Math.max(0, Math.sin(t * 0.55 + 1.2)), 4) * (1 - cure) * (1 - cheer) : 0, wat = sm(93.4, 94.4, t) - sm(97.8, 98.8, t);
+    if (pe.moving) wE.pose({ walk: pe.dist * 3.3, locR: V(0.2, 0.4, 0.22) });
+    else wE.pose({ locR: V(0.16, 0.4, 0.27), headX: lerp(-0.3, 0.35, Math.max(note, wat)), headY: 0.25 * note - 0.3 * wat,
+      locL: wat > 0 ? V(-0.1, 0.52, 0.3) : (cheer > 0 ? V(-0.34, 0.98, 0.1) : V(0.1 + 0.03 * Math.sin(t * 6), 0.43, 0.31)), wL: Math.max(note, wat, cheer) });
+    clip.position.copy(wE.arms[1].H).add(V(-0.06, 0.1, 0.06)); clip.rotation.set(-0.9, -0.25, 0);
+    watch.position.copy(wE.arms[0].H).lerp(wE.arms[0].el.position, 0.32); watch.quaternion.copy(wE.arms[0].fo.quaternion);
     table.visible = t >= 24.6;
     dispMat.emissiveIntensity = t >= 31 ? 1.6 + 0.3 * Math.sin(t * 5) : 0; ledMat.emissiveIntensity = t >= 33.2 ? 2.2 : 0;
 
