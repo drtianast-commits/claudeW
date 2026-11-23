@@ -1,0 +1,30 @@
+# Roteiro da narração: (início em s no vídeo final, fim máximo em s, texto)
+# Conteúdo técnico baseado no PO-002 Rev. 06 (Sistema de Ar Mandado) e nas etapas definidas pelo cliente.
+FALAS = [
+    (0.8, 5.9, "Em uma planta industrial, um vazamento de gás exige resposta rápida e segura."),
+    (7.0, 15.2, "Na tubulação aérea, uma linha de gás em operação apresenta um vazamento."),
+    (15.6, 21.4, "Os operadores percebem o vazamento, se afastam e buscam um local seguro."),
+    (21.5, 24.4, "Pelo rádio, chamam a equipe de emergência."),
+    (24.7, 31.4, "O alarme é acionado. A aproximação só é permitida com máscara ligada ao ar mandado."),
+    (31.7, 40.4, "A equipe da Roman Vedações chega ao local com o sistema de ar mandado."),
+    (40.7, 48.4, "A carretinha do compressor fica a uma distância segura, com o vento verificado pela biruta e calços na roda."),
+    (48.7, 55.4, "O ar do compressor passa pela maleta purificadora e chega às máscaras de pressão positiva."),
+    (55.7, 60.4, "Cada executante porta um kit de respiração autônoma para fuga."),
+    (60.7, 70.9, "A plataforma eleva a equipe até o vazamento. No solo, o vigia monitora o compressor e a maleta, com comunicação constante por rádio."),
+    (71.1, 74.0, "A segurança do trabalho acompanha toda a atividade."),
+    (74.2, 80.0, "Primeiro, as cintas são posicionadas na tubulação."),
+    (80.2, 84.1, "Em seguida, a área do reparo é demarcada,"),
+    (84.3, 88.5, "e a superfície é lixada."),
+    (88.7, 95.4, "Os dois componentes da massa são misturados,"),
+    (95.6, 99.4, "e a massa é aplicada sobre a placa."),
+    (99.6, 104.0, "A placa é posicionada sobre o ponto do vazamento,"),
+    (104.2, 109.0, "e fixada com as cintas, que mantêm a placa sob pressão durante a cura."),
+    (109.2, 111.3, "O vazamento é eliminado."),
+    (111.5, 117.2, "Aguarda-se o tempo de cura da massa, sob acompanhamento da técnica de segurança."),
+    (117.4, 121.7, "Após a cura, as cintas são retiradas,"),
+    (121.9, 127.8, "e é feito o acabamento final do reparo."),
+    (128.0, 131.6, "O reparo está concluído, sem parar o processo."),
+    (131.4, 133.3, "Roman Vedações."),
+    (133.5, 142.1, "Empresa especialista em eliminação de vazamentos com segurança. "
+                   "Trabalho emergencial com a rede em carga, sem parar o processo industrial."),
+]

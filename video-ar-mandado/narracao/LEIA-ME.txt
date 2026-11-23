@@ -1,0 +1,9 @@
+Narração do vídeo v5
+
+1. pip install piper-tts faster-whisper
+2. Baixar a voz pt_BR-cadu-medium (.onnx e .onnx.json) de huggingface.co/rhasspy/piper-voices (pt/pt_BR/cadu/medium)
+3. python3 sintetiza.py pt_BR-cadu-medium.onnx narr.wav 142.5
+4. Conferência: HF_HUB_DISABLE_XET=1 python3 transcreve.py narr.wav
+5. ../blender/add_narr.sh video.mp4 narr.wav video_narrado.mp4  (abaixa a trilha sob a voz e normaliza para -14 LUFS)
+
+Texto e tempos em roteiro.py. Conteúdo técnico baseado no PO-002 Rev. 06.
