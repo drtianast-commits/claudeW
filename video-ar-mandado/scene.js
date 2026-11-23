@@ -315,6 +315,16 @@
     return { x: lerp(pts[i][0], pts[i + 1][0], f), z: lerp(pts[i][1], pts[i + 1][1], f), heading: Math.atan2(dx, dz), dist: k * L, moving: k > 0 && k < 1 };
   }
 
+  // ---------- logotipo da empresa nos veículos ----------
+  const LG = window.LOGO_RGBA;
+  const logoMat = (() => {
+    const c = document.createElement("canvas"); c.width = LG.w; c.height = LG.h; const bin = atob(LG.b64), a = new Uint8ClampedArray(bin.length);
+    for (let i = 0; i < bin.length; i++) a[i] = bin.charCodeAt(i);
+    c.getContext("2d").putImageData(new ImageData(a, LG.w, LG.h), 0, 0);
+    const tx = new T.CanvasTexture(c); tx.colorSpace = T.SRGBColorSpace; tx.anisotropy = 8;
+    const m = new T.MeshStandardMaterial({ map: tx, roughness: 0.45 }); m.name = "LOGO"; return m;
+  })();
+  function logo(w, x, y, z, ry, parent) { const m = new T.Mesh(new T.PlaneGeometry(w, w * LG.h / LG.w), logoMat); m.position.set(x, y, z); m.rotation.y = ry; parent.add(m); return m; }
   // ---------- caminhonete ----------
   function makeTruck() {
     const g = new T.Group(); const white = M(0xeeefed, 0.3, 0.3), dark = M(0x1c2126, 0.3, 0.4), glass = new T.MeshStandardMaterial({ color: 0x1b252d, roughness: 0.05, metalness: 0.8, envMapIntensity: 1.3 });
@@ -325,6 +335,7 @@
     for (const z of [-0.6, 0.6]) box(0.06, 0.16, 0.34, M(0xfff6c8, 0.2, 0, { emissive: 0xfff0a0, emissiveIntensity: 0.9 }), 2.67, 0.95, z, g);
     const wheels = [];
     for (const x of [1.75, -1.6]) for (const z of [-0.9, 0.9]) { const w = cyl(0.42, 0.42, 0.3, M(0x15171a, 0.9), x, 0.42, z, g, 22); w.rotation.x = Math.PI / 2; cyl(0.22, 0.22, 0.31, M(0xb9bcbf, 0.3, 0.8), 0, 0, 0, w, 14); wheels.push(w); }
+    for (const s of [-1, 1]) { logo(0.66, 0.3, 0.86, s * 0.931, s > 0 ? 0 : Math.PI, g); logo(0.82, -1.7, 1.33, s * 0.937, s > 0 ? 0 : Math.PI, g); }
     const bm = new T.MeshStandardMaterial({ color: 0xa35a00, emissive: 0xff9a00, emissiveIntensity: 0 }); bm.name = "DYN_truckBm"; box(1.1, 0.1, 0.22, bm, 0.15, 1.95, 0, g);
     scene.add(g); return { g, wheels, bm };
   }
@@ -340,6 +351,7 @@
       box(0.085, 0.5, 0.085, M(0xd92525, 0.5), -L / 2 + 0.04, y0 + 0.3, s * (Wd / 2 - 0.02), g); box(0.086, 0.16, 0.086, M(0xf5f5f5, 0.5), -L / 2 + 0.04, y0 + 0.3, s * (Wd / 2 - 0.02), g);
     }
     box(0.05, Hh, Wd, blk, L / 2 - 0.03, y0 + Hh / 2, 0, g);
+    for (const s of [-1, 1]) { box(1.1, 0.62, 0.03, blk, 0.35, y0 + 0.85, s * 0.855, g); logo(1.02, 0.35, y0 + 0.85, s * 0.874, s > 0 ? 0 : Math.PI, g); }
     const roof = cyl(Wd / 2 + 0.12, Wd / 2 + 0.12, L + 0.3, blk, 0, y0 + Hh - 0.02, 0, g, 24); roof.rotation.z = Math.PI / 2; roof.scale.set(0.22, 1, 1);
     const shut = cyl(0.1, 0.1, Wd - 0.1, blk, -L / 2 + 0.1, y0 + Hh - 0.12, 0, g, 12); shut.rotation.x = Math.PI / 2;
     box(0.06, 0.07, Wd, yel, -L / 2 + 0.03, y0 + Hh, 0, g);
@@ -360,17 +372,18 @@
   }
   // ---------- plataforma elevatória ----------
   function makeLift() {
-    const g = new T.Group(); const org = M(0xb0202a, 0.4, 0.3), dk = M(0x2a2e33, 0.6, 0.4), gr = M(0xd9dcde, 0.4, 0.5);
+    const g = new T.Group(); const org = M(0x1f63c4, 0.4, 0.3), dk = M(0x2a2e33, 0.6, 0.4), gr = M(0xd9dcde, 0.4, 0.5);
     box(3.7, 0.6, 1.9, dk, 0, 0.8, 0, g); box(2.2, 0.35, 2.1, dk, 0, 0.55, 0, g);
     const wheels = []; for (const x of [-1.3, 1.3]) for (const z of [-1.05, 1.05]) { const w = cyl(0.5, 0.5, 0.36, M(0x15171a, 0.9), x, 0.5, z, g, 22); w.rotation.x = Math.PI / 2; cyl(0.25, 0.25, 0.37, org, 0, 0, 0, w, 14); wheels.push(w); }
     const turret = new T.Group(); turret.position.set(-0.9, 1.1, 0); g.add(turret);
     box(2.0, 0.75, 1.7, org, 0.2, 0.4, 0, turret); box(0.9, 0.6, 1.72, dk, -0.9, 0.5, 0, turret);
     const bm = new T.MeshStandardMaterial({ color: 0xa35a00, emissive: 0xff9a00, emissiveIntensity: 0 }); bm.name = "DYN_liftBm"; cyl(0.07, 0.07, 0.12, bm, 0.6, 0.86, 0.6, turret, 12);
+    for (const s of [-1, 1]) { logo(1.0, 0, 0.8, s * 0.956, s > 0 ? 0 : Math.PI, g); logo(0.86, 0.25, 0.42, s * 0.856, s > 0 ? 0 : Math.PI, turret); }
     const boom = new T.Group(); g.add(boom);
     const b1 = new T.Mesh(new T.BoxGeometry(0.42, 0.46, 1).translate(0, 0, 0.5), org); b1.castShadow = true; boom.add(b1);
     const b2 = new T.Mesh(new T.BoxGeometry(0.3, 0.34, 1).translate(0, 0, 0.5), gr); b2.castShadow = true; boom.add(b2);
     const basket = new T.Group(); g.add(basket);
-    const rail = M(0xb0202a, 0.4, 0.4);
+    const rail = M(0x1f63c4, 0.4, 0.4);
     box(1.9, 0.06, 0.95, dk, 0, -0.4, -0.55, basket);
     const tube = (x0, y0, z0, x1, y1, z1) => { const m = seg(0.022, 0.022, rail, basket); setSeg(m, V(x0, y0, z0), V(x1, y1, z1)); m.castShadow = true; };
     for (const x of [-0.93, 0.93]) for (const z of [-0.1, -1.0]) tube(x, -0.4, z, x, 0.72, z);
@@ -416,6 +429,11 @@
   const wC = makeWorker({ suit: NAVY, vest: true }), wD = makeWorker({ suit: NAVY, vest: true });
   scene.remove(wA.g); lift.basket.add(wA.g); wA.g.rotation.y = Math.PI;
   wC.carry.visible = true; wD.radio.visible = true;
+  // operadores da planta (percebem o vazamento, entram em pânico e acionam a equipe via rádio)
+  const wP1 = makeWorker({ suit: 0x5b636e, helmet: 0xf4f4f0 }), wP2 = makeWorker({ suit: 0x5b636e, helmet: 0xf4f4f0 });
+  wP1.radio.visible = true;
+  // nuvens atravessadas na descida aérea
+  const clouds = []; for (let i = 0; i < 16; i++) clouds.push({ s: puff(0xffffff), x: -90 + rnd() * 170, y: 170 + rnd() * 120, z: -70 + rnd() * 150, r: 60 + rnd() * 70 });
   // técnica em segurança do trabalho (acompanha a atividade no solo)
   const wE = makeWorker({ suit: NAVY, vest: true, vestColor: 0xcfe326, helmet: 0x1f9d55, female: true });
   const clip = new T.Group(); wE.upper.add(clip); box(0.23, 0.31, 0.012, M(0x6b4a2c, 0.7), 0, 0, 0, clip); box(0.2, 0.27, 0.004, M(0xf6f6f2, 0.8), 0, -0.01, 0.008, clip).castShadow = false; box(0.09, 0.03, 0.012, M(0xb9bcbf, 0.3, 0.8), 0, 0.145, 0.008, clip);
@@ -516,29 +534,41 @@
     { a: 112.4, b: 124.1, p0: [-25, 6.5, 30], p1: [-33, 11.5, 40], t0: [-9, 3.2, 9], t1: [-8, 3.5, 6] },
   ];
 
+  const lookP = () => wP1.g.position.clone().lerp(wP2.g.position, 0.5);
+  const shotsR = [
+    { a: -5, b: 0, pf: (k) => { const e = 1 - Math.pow(1 - k, 2.2); return V(lerp(-4, -46, e), 17 * Math.pow(300 / 17, 1 - e), lerp(4, 58, e)); },
+      tf: (tc, k) => { const e = 1 - Math.pow(1 - k, 2.2); return V(lerp(-4, -4, e), lerp(0, 8, e), lerp(0, -6, e)); } },
+    { a: 4.5, b: 7.6, p0: [-8.2, 1.5, 10.8], p1: [-7.5, 1.55, 10.2], t0: [-0.9, 3.7, 3.1], t1: [-0.9, 3.9, 3.0] },          // operadores percebem o vazamento
+    { a: 7.6, b: 10.6, p0: [-14.6, 1.6, 14.4], p1: [-14.2, 1.6, 14.1], tf: () => lookP().add(V(0, 1.1, 0)) },               // fuga em pânico
+    { fs: 4, a: 10.6, b: 12.2, p0: [-10.35, 1.62, 9.15], p1: [-10.6, 1.62, 9.3], t0: [-11.15, 1.45, 11.5], t1: [-11.15, 1.45, 11.5] }, // chamado via rádio
+    { a: 12.2, b: 13.5, p0: [-12.4, 1.75, 13.5], p1: [-12.1, 1.8, 13.2], t0: [-4, 4.5, 4], t1: [-3.6, 4.8, 3.6] },          // olhando o vazamento
+  ];
   // ---------- quadro ----------
-  window.DURATION = 124;
+  window.DURATION = 131.5; window.T0 = -5;
+  const PW0 = 4.5, PWD = 9;                                   // janela do pânico (tempo real)
+  const warp = (x) => x < PW0 ? x : x < PW0 + PWD ? PW0 : x - PWD + 1.5;   // tempo real -> tempo da história
   window.renderFrame = function (t) {
+    const tR = t, inPanic = t >= PW0 && t < PW0 + PWD; t = warp(t);
     // gás
     for (let i = 0; i < GN; i++) {
       const s = gas[i], rate = 0.34 + (i % 7) * 0.03, ph = frac(i * 0.6180339);
-      const u = frac(t * rate + ph), birth = t - u / rate, gi = G(birth);
+      const u = frac(tR * rate + ph), birth = tR - u / rate, gi = G(warp(birth));
       if (gi <= 0.001) { s.material.opacity = 0; continue; }
       const jl = 3.4 * Math.sqrt(gi), sd = 1 - (1 - u) * (1 - u), tw = 2.2 * u;
-      s.position.set(leakE.x + 0.1 * jl * sd + 10.5 * Math.pow(u, 1.55) + Math.sin(i * 12.9 + t * 1.3) * 0.45 * tw,
-        leakE.y + 0.9 * jl * sd + 3.0 * u + Math.cos(i * 7.1 + t * 1.1) * 0.35 * tw,
-        leakE.z + 0.35 * jl * sd + Math.sin(i * 3.7 + t * 0.9) * 0.55 * tw);
+      s.position.set(leakE.x + 0.1 * jl * sd + 10.5 * Math.pow(u, 1.55) + Math.sin(i * 12.9 + tR * 1.3) * 0.45 * tw,
+        leakE.y + 0.9 * jl * sd + 3.0 * u + Math.cos(i * 7.1 + tR * 1.1) * 0.35 * tw,
+        leakE.z + 0.35 * jl * sd + Math.sin(i * 3.7 + tR * 0.9) * 0.55 * tw);
       const sz = (0.2 + u * 3.6) * (0.75 + 0.25 * gi); s.scale.set(sz, sz, 1);
       s.material.opacity = 0.6 * Math.pow(1 - u, 1.3) * Math.min(1, u * 14) * (0.35 + 0.65 * gi);
     }
     for (let i = 0; i < steam.length; i++) {
-      const s = steam[i], u = frac(t * 0.05 + i / 13), k = i % 2, bx = k ? 62 : -72, bz = k ? -60 : -62, by = k ? 58 : 46;
-      s.position.set(bx + 26 * u + Math.sin(i * 3 + t * 0.3) * 2 * u, by + 9 * Math.sqrt(u), bz + Math.cos(i * 5.1) * 3 * u);
+      const s = steam[i], u = frac(tR * 0.05 + i / 13), k = i % 2, bx = k ? 62 : -72, bz = k ? -60 : -62, by = k ? 58 : 46;
+      s.position.set(bx + 26 * u + Math.sin(i * 3 + tR * 0.3) * 2 * u, by + 9 * Math.sqrt(u), bz + Math.cos(i * 5.1) * 3 * u);
       const sz = 3 + u * 16; s.scale.set(sz, sz, 1); s.material.opacity = 0.42 * (1 - u) * Math.min(1, u * 8);
     }
     const alarm = t >= 5.5 && t < 91.4;
     for (const b of beacons) { const p = alarm ? Math.pow(0.5 + 0.5 * Math.sin(t * 9 + b.ph), 2) : 0; b.mat.emissiveIntensity = p * 4.5; if (b.pl) b.pl.intensity = p * 110; }
-    sockArea.rotation.z = Math.sin(t * 2.3) * 0.06 - 0.1; sockArea.rotation.y = Math.sin(t * 1.1) * 0.08;
+    sockArea.rotation.z = Math.sin(tR * 2.3) * 0.06 - 0.1; sockArea.rotation.y = Math.sin(tR * 1.1) * 0.08;
     trailer.sock.rotation.z = Math.sin(t * 2.7 + 1) * 0.07 - 0.12; trailer.sock.rotation.y = Math.sin(t * 1.3) * 0.1;
 
     // veículos
@@ -706,6 +736,33 @@
     table.visible = t >= 24.6;
     dispMat.emissiveIntensity = t >= 31 ? 1.6 + 0.3 * Math.sin(t * 5) : 0; ledMat.emissiveIntensity = t >= 33.2 ? 2.2 : 0;
 
+    // ---- operadores da planta: pânico e chamado via rádio ----
+    const pvis = tR < PW0 + PWD; wP1.g.visible = wP2.g.visible = pvis;
+    if (pvis) {
+      const p = tR - PW0, ST = [[-1.7, 5.3], [-0.9, 6.15]], EN = [[-11.5, 11.2], [-10.55, 12.0]];
+      [wP1, wP2].forEach((w, j) => {
+        const [sx, sz] = ST[j], [ex, ez] = EN[j], hL = Math.atan2(0.35 - sx, 0.4 - sz), hE = Math.atan2(0.35 - ex, 0.4 - ez);
+        const bx = sx - 0.45 * Math.sin(hL), bz = sz - 0.45 * Math.cos(hL);
+        if (p < 0.8) { const x = lerp(sx - 12.8, sx, clamp((tR + 5) / (PW0 + 5.8))); w.g.position.set(x, 0, sz); w.g.rotation.y = Math.PI / 2; w.pose({ walk: x * 3.1 + j * 0.8 }); }
+        else if (p < 2.5 + j * 0.15) {
+          const kb = sm(1.5, 2.2, p); w.g.position.set(lerp(sx, bx, kb), 0, lerp(sz, bz, kb)); w.g.rotation.y = lerp(Math.PI / 2, hL, sm(0.8, 1.3, p));
+          const fl = win(1.45, 2.6 + j * 0.15, p, 0.25);
+          w.pose({ headX: -0.5 * sm(0.8, 1.3, p) + 0.25 * fl, lean: -0.18 * fl, locL: V(-0.13, 0.8, 0.24), wL: fl, locR: V(0.13, 0.8, 0.24), wR: fl });
+        } else {
+          const pa = pathAt([[bx, bz], [lerp(bx, ex, 0.5) - 1.2, lerp(bz, ez, 0.5) + 0.6], [ex, ez]], PW0 + 2.5 + j * 0.15, PW0 + 5.7 + j * 0.1, tR);
+          w.g.position.set(pa.x, 0, pa.z);
+          if (pa.moving) { w.g.rotation.y = pa.heading; w.pose({ walk: pa.dist * 2.2, lean: 0.3, headY: j ? 0.9 * win(3.5, 4.5, p, 0.25) : 0 }); }
+          else {
+            w.g.rotation.y = lerp(Math.atan2(ex - bx, ez - bz), hE, sm(5.8, 6.3, p)); const br = 0.05 * Math.sin(p * 6);
+            if (j === 0) w.pose({ lean: 0.08 + br, headX: -0.2, locL: V(-0.16, 0.74, 0.16), wL: sm(5.95, 6.35, p), locR: V(0.3, 0.82 + 0.06 * Math.sin(p * 7), 0.46), wR: win(6.7, 9.2, p, 0.3) });
+            else { const pt = win(6.0, 7.9, p, 0.3), hd = sm(7.7, 8.1, p); w.pose({ lean: 0.06 + br, headX: -0.3, locR: pt > 0 ? V(0.2, 0.98, 0.55) : V(0.14, 0.97, 0.02), wR: Math.max(pt, hd), locL: V(-0.14, 0.97, 0.02), wL: hd }); }
+          }
+        }
+      });
+    }
+    // nuvens da descida
+    clouds.forEach((c) => { c.s.position.set(c.x, c.y, c.z); c.s.scale.set(c.r, c.r * 0.55, 1); c.s.material.opacity = tR < -0.5 ? 0.8 * (1 - sm(-1.8, -0.6, tR)) : 0; });
+
     // mangueiras
     setHose(hoseY, [V(-17.0, 1.25, 17.05), V(-17.25, 0.75, 16.75), V(-17.75, 0.35, 16.25), V(-18.25, 0.6, 15.75), V(-18.13, 0.95, 15.6)], sm(30.2, 32.2, t), 0.028);
     const ub = V(basketW.x - 0.2, 0.04, basketW.z + 0.5);
@@ -717,10 +774,11 @@
     }
 
     // câmera
-    let sh = shots[shots.length - 1]; for (const s of shots) if (t >= s.a && t < s.b) { sh = s; break; }
-    const kl = clamp((t - sh.a) / (sh.b - sh.a)), kk = 0.5 * kl + 0.5 * kl * kl * (3 - 2 * kl);
-    camera.position.set(lerp(sh.p0[0], sh.p1[0], kk), lerp(sh.p0[1], sh.p1[1], kk), lerp(sh.p0[2], sh.p1[2], kk));
-    const tgv = sh.tf ? sh.tf(t) : V(lerp(sh.t0[0], sh.t1[0], kk), lerp(sh.t0[1], sh.t1[1], kk), lerp(sh.t0[2], sh.t1[2], kk));
+    const useR = tR < 0 || inPanic, tc = useR ? tR : t, arr = useR ? shotsR : shots;
+    let sh = arr[arr.length - 1]; for (const s of arr) if (tc >= s.a && tc < s.b) { sh = s; break; }
+    const kl = clamp((tc - sh.a) / (sh.b - sh.a)), kk = 0.5 * kl + 0.5 * kl * kl * (3 - 2 * kl);
+    if (sh.pf) camera.position.copy(sh.pf(kl)); else camera.position.set(lerp(sh.p0[0], sh.p1[0], kk), lerp(sh.p0[1], sh.p1[1], kk), lerp(sh.p0[2], sh.p1[2], kk));
+    const tgv = sh.tf ? sh.tf(tc, kl) : V(lerp(sh.t0[0], sh.t1[0], kk), lerp(sh.t0[1], sh.t1[1], kk), lerp(sh.t0[2], sh.t1[2], kk));
     camera.lookAt(tgv); camFocus = camera.position.distanceTo(tgv); camFs = sh.fs || 0;
     if (!window.NO_RENDER) renderer.render(scene, camera);
     return true;

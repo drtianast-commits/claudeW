@@ -1,0 +1,1 @@
+Textura da Terra: bmng.jpg (NASA Blue Marble Next Generation, domínio público), obtida do pacote PyPI basemap-data 2.0.0 (mpl_toolkits/basemap_data/bmng.jpg). Copiar para esta pasta antes de rodar earth_bl.py.

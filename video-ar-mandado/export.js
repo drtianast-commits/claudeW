@@ -19,13 +19,15 @@ const FPS = 24, OUT = path.join(__dirname, "..", "blender");
   await page.goto("http://local/index.html");
   await page.waitForFunction("window.READY");
   await page.evaluate(() => { window.NO_RENDER = true; });
+  await page.addScriptTag({ url: "http://local/logo_rgba.js" });
   await page.addScriptTag({ url: "http://local/scene.js" });
   const meta = await page.evaluate(() => window.exportMeta());
-  const N = Math.ceil(await page.evaluate(() => window.DURATION) * FPS);
+  const N = Math.ceil(await page.evaluate(() => window.DURATION - (window.T0 || 0)) * FPS);
   meta.frames = N; meta.fps = FPS;
   console.log("meta", meta.nMesh, meta.nSpr, meta.nDyn, N);
   const lines = [];
-  for (let f = 0; f < N; f++) lines.push(JSON.stringify(await page.evaluate(([t, full]) => window.exportState(t, full), [f / FPS, f === 0])));
+  const T0 = await page.evaluate(() => window.T0 || 0); meta.t0 = T0;
+  for (let f = 0; f < N; f++) lines.push(JSON.stringify(await page.evaluate(([t, full]) => window.exportState(t, full), [T0 + f / FPS, f === 0])));
   fs.writeFileSync(path.join(OUT, "meta.json"), JSON.stringify(meta));
   fs.writeFileSync(path.join(OUT, "frames.jsonl.gz"), zlib.gzipSync(lines.join("\n")));
   const b64 = await page.evaluate(() => new Promise((res, rej) => {

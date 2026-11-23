@@ -13,6 +13,7 @@ const FPS = 24;
   page.on("pageerror", (e) => console.log("pageerror:", e.message));
   await page.setContent('<html><body style="margin:0;background:#000"><canvas id="c" width="1920" height="1080"></canvas></body></html>');
   await page.addScriptTag({ path: path.join(__dirname, "node_modules/three/build/three.min.js") });
+  await page.addScriptTag({ path: path.join(__dirname, "logo_rgba.js") });
   await page.addScriptTag({ path: path.join(__dirname, "scene.js") });
   const t0 = Date.now();
   for (let f = a; f < b; f += step) {

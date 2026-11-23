@@ -173,7 +173,7 @@ cy.device = "CPU"; cy.samples = SAMPLES; cy.use_adaptive_sampling = True; cy.ada
 cy.use_denoising = True; cy.denoiser = "OPENIMAGEDENOISE"
 try: cy.denoising_prefilter = "FAST"
 except Exception: pass
-cy.max_bounces = 5; cy.diffuse_bounces = 2; cy.glossy_bounces = 3; cy.transmission_bounces = 3; cy.transparent_max_bounces = 28
+cy.max_bounces = 5; cy.diffuse_bounces = 2; cy.glossy_bounces = 3; cy.transmission_bounces = 3; cy.transparent_max_bounces = 96
 cy.caustics_reflective = False; cy.caustics_refractive = False; cy.sample_clamp_indirect = 4
 sc.render.use_persistent_data = True
 sc.render.resolution_x = RW; sc.render.resolution_y = RH; sc.render.resolution_percentage = 100
