@@ -1,0 +1,9 @@
+Versão fotorrealista (v6), gerada no Higgsfield a partir dos planos do render 3D v5.
+
+1. Quadro de referência de cada plano: render do Blender (frames540).
+2. Quadro fotorrealista: GPT Image 2.6 (qualidade medium, 16:9), com o logotipo como segunda referência nos planos com veículos.
+3. Animação: Kling 3.0 Turbo, 720p, duração por plano em shots.py.
+4. monta.py ajusta cada clipe à duração do plano (desaceleração com mistura de quadros quando necessário) e gera frames_ai/f%05d.jpg.
+5. ../blender/encode5.sh 24 '../hf/frames_ai/f*.jpg' saida.mp4 e ../blender/add_narr.sh para a narração.
+
+Uso: SO_IMG=1 python3 lote.py (só quadros), depois python3 lote.py (vídeos). Exige a CLI higgsfield autenticada.
