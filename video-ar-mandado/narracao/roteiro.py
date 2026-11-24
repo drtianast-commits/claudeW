@@ -7,7 +7,7 @@ FALAS = [
     (21.5, 24.4, "Pelo rádio, chamam a equipe de emergência."),
     (24.7, 31.4, "O alarme é acionado. A aproximação só é permitida com máscara ligada ao ar mandado."),
     (31.7, 40.4, "A equipe da Roman Vedações chega ao local com o sistema de ar mandado."),
-    (40.7, 48.4, "A carretinha do compressor fica a uma distância segura, com o vento verificado pela biruta e calços na roda."),
+    (40.7, 48.4, "A carretinha do compressor fica a uma distância segura, com a direção do vento verificada pela biruta."),
     (48.7, 55.4, "O ar do compressor passa pela maleta purificadora e chega às máscaras de pressão positiva."),
     (55.7, 60.4, "Cada executante porta um kit de respiração autônoma para fuga."),
     (60.7, 70.9, "A plataforma eleva a equipe até o vazamento. No solo, o vigia monitora o compressor e a maleta, com comunicação constante por rádio."),

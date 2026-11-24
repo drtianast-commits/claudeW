@@ -1,0 +1,29 @@
+Roteiro de narração: Vazamento de gás, ar mandado (vídeo v7)
+
+Voz: Piper TTS, pt_BR cadu medium. Base técnica: PO-002 Rev. 06, Sistema de Ar Mandado (Roman Vedações).
+
+00:00.8  Em uma planta industrial, um vazamento de gás exige resposta rápida e segura.
+00:07.0  Na tubulação aérea, uma linha de gás em operação apresenta um vazamento.
+00:15.6  Os operadores percebem o vazamento, se afastam e buscam um local seguro.
+00:21.5  Pelo rádio, chamam a equipe de emergência.
+00:24.7  O alarme é acionado. A aproximação só é permitida com máscara ligada ao ar mandado.
+00:31.7  A equipe da Roman Vedações chega ao local com o sistema de ar mandado.
+00:40.7  A carretinha do compressor fica a uma distância segura, com a direção do vento verificada pela biruta.
+00:48.7  O ar do compressor passa pela maleta purificadora e chega às máscaras de pressão positiva.
+00:55.7  Cada executante porta um kit de respiração autônoma para fuga.
+01:00.7  A plataforma eleva a equipe até o vazamento. No solo, o vigia monitora o compressor e a maleta, com comunicação constante por rádio.
+01:11.1  A segurança do trabalho acompanha toda a atividade.
+01:14.2  Primeiro, as cintas são posicionadas na tubulação.
+01:20.2  Em seguida, a área do reparo é demarcada,
+01:24.3  e a superfície é lixada.
+01:28.7  Os dois componentes da massa são misturados,
+01:35.6  e a massa é aplicada sobre a placa.
+01:39.6  A placa é posicionada sobre o ponto do vazamento,
+01:44.2  e fixada com as cintas, que mantêm a placa sob pressão durante a cura.
+01:49.2  O vazamento é eliminado.
+01:51.5  Aguarda-se o tempo de cura da massa, sob acompanhamento da técnica de segurança.
+01:57.4  Após a cura, as cintas são retiradas,
+02:01.9  e é feito o acabamento final do reparo.
+02:08.0  O reparo está concluído, sem parar o processo.
+02:11.4  Roman Vedações.
+02:13.5  Empresa especialista em eliminação de vazamentos com segurança. Trabalho emergencial com a rede em carga, sem parar o processo industrial.
